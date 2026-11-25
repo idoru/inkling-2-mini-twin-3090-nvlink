@@ -52,6 +52,18 @@ checkpoint — the MTP head is a DSpark drafter. Speculation costs KV: 433,746 t
 - 4 × 60k concurrent (cold): all OK, TTFT avg 32 s / max 52 s.
 - 8k-context stress, 300 out: 8 → 160 tok/s, 16 → 171, 32 → 175 (prefill-bound; 32 × 8k ≈ the whole KV pool).
 
+## Cold prefill sweep (2026-11-25, final defaults) — prefill_sweep.json
+One request at a time, unique filler, needle mode, reasoning effort low. TTFT is the prefill.
+| prompt tok | TTFT s | prefill tok/s | needle |
+|---:|---:|---:|---|
+| 2,009   | 0.57  | 3,507 | correct |
+| 7,999   | 1.54  | 5,187 | correct |
+| 15,977  | 2.94  | 5,437 | correct |
+| 31,914  | 6.04  | 5,288 | correct |
+| 63,678  | 13.41 | 4,748 | correct |
+| 127,361 | 33.30 | 3,825 | correct |
+| 248,747 | 90.94 | 2,735 | correct |
+
 ## Correctness
 - bench/eval_correctness.py (eval_correctness.json): 20/20 (5 needles @ 111,670 tok, math, code, JSON).
 - Tool calling (`inkling` parser): correct `get_weather` call. Image input: shapes, colours and text read correctly.

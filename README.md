@@ -6,8 +6,15 @@ with vLLM on two NVLink-bridged RTX 3090s: tensor parallel across both cards,
 262,144-token context, speculative decoding from the checkpoint's own MTP
 head, and an OpenAI-compatible API on `localhost:8000`.
 
-Measured on this setup: 125 tok/s for a single stream, 983 tok/s aggregate at
-32 concurrent streams, and a correct answer from a cold 248,773-token prompt.
+Measured on this setup:
+
+| | |
+|---|---|
+| Decode, 1 stream | 125 tok/s |
+| Decode, 32 streams | 983 tok/s aggregate (37 tok/s per stream) |
+| Prefill, 8k–32k prompt | about 5,200–5,400 tok/s (32k tokens in 6 s) |
+| Prefill, 128k prompt | 3,800 tok/s (33 s) |
+| Prefill, 250k prompt | 2,700 tok/s (91 s), and the needle in it is found |
 
 > **This is not a configuration vLLM supports.** Upstream runs Inkling 2 on
 > Hopper and Blackwell GPUs only and refuses to start on a 3090. The image
@@ -107,9 +114,26 @@ default reasoning effort. Full tables and raw data are in
   2% at 16. It also takes KV memory: 329,103 tokens with it versus 433,746
   without, at 16 sequences. For a batch-heavy workload, `SPEC_TOKENS=0` is the
   better setting.
-- **Long prompts.** Cold prefill runs at about 5,200 tok/s for a 30k prompt
-  and 2,700 tok/s for a 250k prompt, which is 92 seconds to first token at
-  250k. Prefix caching is on, so a repeated prefix is not paid for twice.
+- **Prefill.** See the table below. Prefix caching is on, so a repeated
+  prefix is not paid for twice.
+
+### Prefill
+
+One cold request at a time (unique text, so nothing comes from the prefix
+cache), default configuration. Time to first token is the whole prefill.
+
+| Prompt tokens | Time to first token | Prefill tok/s |
+|---:|---:|---:|
+| 2,009 | 0.6 s | 3,507 |
+| 7,999 | 1.5 s | 5,187 |
+| 15,977 | 2.9 s | 5,437 |
+| 31,914 | 6.0 s | 5,288 |
+| 63,678 | 13.4 s | 4,748 |
+| 127,361 | 33.3 s | 3,825 |
+| 248,747 | 90.9 s | 2,735 |
+
+Speed falls with length because four of the 24 layers attend over the whole
+prompt. Every run returned the correct needle.
 
 ## Configuration
 
