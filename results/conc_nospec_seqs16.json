@@ -1,0 +1,84 @@
+{
+ "args": {
+  "mode": "conc",
+  "levels": [
+   1,
+   2,
+   4,
+   8,
+   16
+  ],
+  "max_tokens": 512,
+  "ctx": 250000,
+  "effort": null,
+  "temperature": null,
+  "output": "k0_conc.json"
+ },
+ "rows": [
+  {
+   "conc": 1,
+   "ok": 1,
+   "errors": [],
+   "wall_s": 4.58,
+   "out_tokens": 512,
+   "agg_tps": 111.9,
+   "per_stream_decode_tps": 119.8,
+   "min_stream_decode_tps": 119.8,
+   "ttft_avg": 0.31,
+   "ttft_max": 0.31,
+   "prompt_tokens_avg": 38
+  },
+  {
+   "conc": 2,
+   "ok": 2,
+   "errors": [],
+   "wall_s": 5.82,
+   "out_tokens": 1024,
+   "agg_tps": 176.0,
+   "per_stream_decode_tps": 90.3,
+   "min_stream_decode_tps": 90.3,
+   "ttft_avg": 0.15,
+   "ttft_max": 0.16,
+   "prompt_tokens_avg": 34
+  },
+  {
+   "conc": 4,
+   "ok": 4,
+   "errors": [],
+   "wall_s": 6.73,
+   "out_tokens": 2048,
+   "agg_tps": 304.2,
+   "per_stream_decode_tps": 77.9,
+   "min_stream_decode_tps": 77.9,
+   "ttft_avg": 0.17,
+   "ttft_max": 0.17,
+   "prompt_tokens_avg": 36
+  },
+  {
+   "conc": 8,
+   "ok": 8,
+   "errors": [],
+   "wall_s": 8.25,
+   "out_tokens": 4096,
+   "agg_tps": 496.5,
+   "per_stream_decode_tps": 63.4,
+   "min_stream_decode_tps": 63.3,
+   "ttft_avg": 0.18,
+   "ttft_max": 0.18,
+   "prompt_tokens_avg": 33
+  },
+  {
+   "conc": 16,
+   "ok": 16,
+   "errors": [],
+   "wall_s": 10.45,
+   "out_tokens": 8192,
+   "agg_tps": 784.0,
+   "per_stream_decode_tps": 50.0,
+   "min_stream_decode_tps": 49.9,
+   "ttft_avg": 0.21,
+   "ttft_max": 0.21,
+   "prompt_tokens_avg": 32
+  }
+ ]
+}

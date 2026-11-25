@@ -1,0 +1,37 @@
+{
+ "args": {
+  "mode": "needle",
+  "levels": [
+   1,
+   2,
+   4,
+   8,
+   16
+  ],
+  "max_tokens": 4000,
+  "ctx": 250000,
+  "effort": "low",
+  "temperature": null,
+  "output": "E_needle250k.json"
+ },
+ "rows": [
+  {
+   "conc": 1,
+   "ok": 1,
+   "errors": [],
+   "wall_s": 93.07,
+   "out_tokens": 130,
+   "agg_tps": 1.4,
+   "per_stream_decode_tps": 135.0,
+   "min_stream_decode_tps": 135.0,
+   "ttft_avg": 92.11,
+   "ttft_max": 92.11,
+   "prompt_tokens_avg": 248773,
+   "expected": "953592",
+   "answer": "953592",
+   "correct": true,
+   "ctx_target": 250000,
+   "prefill_tok_per_s": 2701
+  }
+ ]
+}

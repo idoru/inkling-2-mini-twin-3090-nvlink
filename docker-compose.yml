@@ -1,0 +1,98 @@
+name: inkling-2-mini
+
+services:
+  vllm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Pinned to the validated nightly; `nightly` tracks upstream (the build
+        # fails loudly if the SM86 patch no longer matches the source).
+        VLLM_VERSION: ${VLLM_VERSION:-nightly-f2f9edcac30d128bc090a3c032e4ba125716a641}
+        # Lowers vLLM's SM90 gate for the Inkling2 checkpoint so it loads on
+        # SM86. Unsupported upstream; rationale in inkling_sm86_patch.py.
+        INKLING_SM86_PATCH: ${INKLING_SM86_PATCH:-1}
+        DOCKER_UID: ${DOCKER_UID:-1000}
+        DOCKER_GID: ${DOCKER_GID:-1000}
+    image: inkling-2-mini-vllm:${VLLM_VERSION:-nightly-f2f9edcac30d128bc090a3c032e4ba125716a641}
+    container_name: ${CONTAINER_NAME:-inkling-2-mini}
+
+    # Host networking: the server is on localhost:8000 (it binds 0.0.0.0, so
+    # firewall the port if the machine is exposed), and NCCL P2P over the
+    # NVLink bridge has one less hop to negotiate.
+    network_mode: host
+
+    gpus: all
+    # TP=2 workers hand tensors over /dev/shm; the 64 MB default deadlocks
+    # engine startup.
+    ipc: host
+
+    # Downloads and compile caches land under the invoking user, not root.
+    user: "${DOCKER_UID:-1000}:${DOCKER_GID:-1000}"
+
+    volumes:
+      # Host Hugging Face cache, read-write: the ~20 GB checkpoint downloads
+      # once on first start and is reused by every later `up`.
+      - ${HF_CACHE_DIR:-${HOME}/.cache/huggingface}:/hf-cache
+      # torch.compile / Triton / vLLM artifacts. Persisting these is what
+      # turns a ~2 min cold start into a ~45 s warm restart.
+      - vllm-home:/home/vllm
+
+    environment:
+      HF_HOME: /hf-cache
+      HOME: /home/vllm
+      # Pin the torch/vLLM caches into the persisted volume explicitly rather
+      # than trusting each library's HOME-derived default.
+      XDG_CACHE_HOME: /home/vllm/.cache
+      TORCHINDUCTOR_CACHE_DIR: /home/vllm/.cache/torchinductor
+      TRITON_CACHE_DIR: /home/vllm/.cache/triton
+      VLLM_CACHE_ROOT: /home/vllm/.cache/vllm
+      HF_XET_HIGH_PERFORMANCE: "1"
+      VLLM_WORKER_MULTIPROC_METHOD: spawn
+
+      # Twin RTX 3090 + NVLink (4 links x 14.062 GB/s). Both visible.
+      CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-0,1}
+      # Force NCCL over NVLink (P2P) instead of PCIe.
+      NCCL_P2P_LEVEL: ${NCCL_P2P_LEVEL:-NVL}
+
+      # Serving tunables — see entrypoint.sh for what each one does.
+      MODEL: ${MODEL:-thinkingmachines/Inkling-2-Mini}
+      SERVED_MODEL_NAMES: ${SERVED_MODEL_NAMES:-Inkling-2-Mini inkling-2-mini thinkingmachines/Inkling-2-Mini}
+      MAX_MODEL_LEN: ${MAX_MODEL_LEN:-262144}
+      GPU_MEM_UTIL: ${GPU_MEM_UTIL:-}
+      KV_CACHE_DTYPE: ${KV_CACHE_DTYPE:-auto}
+      MAX_NUM_SEQS: ${MAX_NUM_SEQS:-32}
+      MAX_NUM_BATCHED_TOKENS: ${MAX_NUM_BATCHED_TOKENS:-1024}
+      TENSOR_PARALLEL_SIZE: ${TENSOR_PARALLEL_SIZE:-2}
+      SPEC_METHOD: ${SPEC_METHOD:-dspark}
+      SPEC_TOKENS: ${SPEC_TOKENS:-7}
+      SPEC_DRAFT_SAMPLE: ${SPEC_DRAFT_SAMPLE:-probabilistic}
+      LONG_PREFILL_THRESHOLD: ${LONG_PREFILL_THRESHOLD:-32768}
+      ENABLE_PREFIX_CACHING: ${ENABLE_PREFIX_CACHING:-1}
+      EXTRA_ARGS: ${EXTRA_ARGS:-}
+      HUGGING_FACE_HUB_TOKEN: ${HUGGING_FACE_HUB_TOKEN:-}
+
+    restart: unless-stopped
+    stop_grace_period: 60s
+
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health', timeout=5).status==200 else 1)\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      # First start downloads ~20 GB of weights and compiles kernels; do not
+      # let the healthcheck declare failure during that.
+      start_period: 30m
+
+    ulimits:
+      memlock: -1
+      stack: 67108864
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+volumes:
+  vllm-home:

@@ -1,0 +1,62 @@
+{
+ "args": {
+  "mode": "conc",
+  "levels": [
+   32,
+   48,
+   64
+  ],
+  "max_tokens": 512,
+  "ctx": 250000,
+  "effort": null,
+  "temperature": null,
+  "output": "F_conc.json"
+ },
+ "rows": [
+  {
+   "conc": 32,
+   "ok": 32,
+   "errors": [],
+   "wall_s": 18.95,
+   "out_tokens": 16384,
+   "agg_tps": 864.8,
+   "per_stream_decode_tps": 34.8,
+   "min_stream_decode_tps": 30.4,
+   "ttft_avg": 1.85,
+   "ttft_max": 2.08,
+   "prompt_tokens_avg": 33,
+   "accept_rate": 0.192,
+   "mean_accepted_per_step": 1.34
+  },
+  {
+   "conc": 48,
+   "ok": 48,
+   "errors": [],
+   "wall_s": 23.49,
+   "out_tokens": 24574,
+   "agg_tps": 1046.2,
+   "per_stream_decode_tps": 26.0,
+   "min_stream_decode_tps": 22.2,
+   "ttft_avg": 0.45,
+   "ttft_max": 0.58,
+   "prompt_tokens_avg": 35,
+   "accept_rate": 0.206,
+   "mean_accepted_per_step": 1.44
+  },
+  {
+   "conc": 64,
+   "ok": 64,
+   "errors": [],
+   "wall_s": 28.23,
+   "out_tokens": 32768,
+   "agg_tps": 1160.6,
+   "per_stream_decode_tps": 21.8,
+   "min_stream_decode_tps": 18.6,
+   "ttft_avg": 0.58,
+   "ttft_max": 0.85,
+   "prompt_tokens_avg": 36,
+   "accept_rate": 0.202,
+   "mean_accepted_per_step": 1.41
+  }
+ ]
+}

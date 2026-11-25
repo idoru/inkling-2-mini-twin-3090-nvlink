@@ -1,0 +1,226 @@
+{
+  "model": "inkling-2-mini",
+  "wall_s": 143.06010495201917,
+  "passed": 20,
+  "total": 20,
+  "by_category": {
+    "needle": [
+      5,
+      5
+    ],
+    "math": [
+      5,
+      5
+    ],
+    "code": [
+      5,
+      5
+    ],
+    "json": [
+      5,
+      5
+    ]
+  },
+  "results": [
+    {
+      "id": "needle_pos_05",
+      "category": "needle",
+      "pass": true,
+      "reason": "",
+      "latency_s": 29.382121557020582,
+      "response": "cobalt-meridian-42",
+      "prompt_tokens": 111670,
+      "completion_tokens": 105
+    },
+    {
+      "id": "needle_pos_25",
+      "category": "needle",
+      "pass": true,
+      "reason": "",
+      "latency_s": 29.24828501898446,
+      "response": "azure-helix-789",
+      "prompt_tokens": 111670,
+      "completion_tokens": 108
+    },
+    {
+      "id": "needle_pos_50",
+      "category": "needle",
+      "pass": true,
+      "reason": "",
+      "latency_s": 29.246510109020164,
+      "response": "crimson-eta-15",
+      "prompt_tokens": 111670,
+      "completion_tokens": 274
+    },
+    {
+      "id": "needle_pos_75",
+      "category": "needle",
+      "pass": true,
+      "reason": "",
+      "latency_s": 24.226501194993034,
+      "response": "jade-vortex-3",
+      "prompt_tokens": 111670,
+      "completion_tokens": 170
+    },
+    {
+      "id": "needle_pos_95",
+      "category": "needle",
+      "pass": true,
+      "reason": "",
+      "latency_s": 18.355177118006395,
+      "response": "amber-quantum-77",
+      "prompt_tokens": 111670,
+      "completion_tokens": 267
+    },
+    {
+      "id": "math_1",
+      "category": "math",
+      "pass": true,
+      "reason": "",
+      "latency_s": 0.37867747398559004,
+      "response": "168",
+      "prompt_tokens": 49,
+      "completion_tokens": 99
+    },
+    {
+      "id": "math_2",
+      "category": "math",
+      "pass": true,
+      "reason": "",
+      "latency_s": 0.47618265901110135,
+      "response": "12pm",
+      "prompt_tokens": 73,
+      "completion_tokens": 109
+    },
+    {
+      "id": "math_3",
+      "category": "math",
+      "pass": true,
+      "reason": "",
+      "latency_s": 0.3338315290166065,
+      "response": "15/4",
+      "prompt_tokens": 54,
+      "completion_tokens": 69
+    },
+    {
+      "id": "math_4",
+      "category": "math",
+      "pass": true,
+      "reason": "",
+      "latency_s": 0.24875755998073146,
+      "response": "81",
+      "prompt_tokens": 38,
+      "completion_tokens": 40
+    },
+    {
+      "id": "math_5",
+      "category": "math",
+      "pass": true,
+      "reason": "",
+      "latency_s": 0.4616694069991354,
+      "response": "7",
+      "prompt_tokens": 46,
+      "completion_tokens": 119
+    },
+    {
+      "id": "code_1",
+      "category": "code",
+      "pass": true,
+      "reason": "",
+      "latency_s": 0.9056117540167179,
+      "response": "def is_palindrome(s: str) -> bool:\n    cleaned = [ch.lower() for ch in s if ch.isalnum()]\n    return cleaned == cleaned[::-1]",
+      "prompt_tokens": 73,
+      "completion_tokens": 209
+    },
+    {
+      "id": "code_2",
+      "category": "code",
+      "pass": true,
+      "reason": "",
+      "latency_s": 1.1831517500104383,
+      "response": "def fizzbuzz(n: int) -> list[str]:\n    result = []\n    for i in range(1, n + 1):\n        if i % 15 == 0:\n            result.append(\"FizzBuzz\")\n        elif i % 3 == 0:\n            result.append(\"Fizz\")\n        elif i % 5 == 0:\n            result.append(\"Buzz\")\n        else:\n            result.append(str(i))\n    return result",
+      "prompt_tokens": 57,
+      "completion_tokens": 289
+    },
+    {
+      "id": "code_3",
+      "category": "code",
+      "pass": true,
+      "reason": "",
+      "latency_s": 1.4077133870159741,
+      "response": "def reverse_words(s: str) -> str:\n    return ' '.join(s.split()[::-1])",
+      "prompt_tokens": 53,
+      "completion_tokens": 231
+    },
+    {
+      "id": "code_4",
+      "category": "code",
+      "pass": true,
+      "reason": "",
+      "latency_s": 2.3035695730068255,
+      "response": "def is_prime(n: int) -> bool:\n    if n < 2:\n        return False\n    if n == 2:\n        return True\n    if n % 2 == 0:\n        return False\n    i = 3\n    while i * i <= n:\n        if n % i == 0:\n            return False\n        i += 2\n    return True",
+      "prompt_tokens": 43,
+      "completion_tokens": 524
+    },
+    {
+      "id": "code_5",
+      "category": "code",
+      "pass": true,
+      "reason": "",
+      "latency_s": 1.2753916990186553,
+      "response": "def nth_fibonacci(n: int) -> int:\n    if n < 0:\n        raise ValueError(\"n must be non-negative\")\n    a, b = 0, 1\n    for _ in range(n):\n        a, b = b, a + b\n    return a",
+      "prompt_tokens": 56,
+      "completion_tokens": 318
+    },
+    {
+      "id": "json_1",
+      "category": "json",
+      "pass": true,
+      "reason": "",
+      "latency_s": 0.6601222240133211,
+      "response": "{\"capital\":\"Paris\",\"population_millions\":68.1}",
+      "prompt_tokens": 44,
+      "completion_tokens": 145
+    },
+    {
+      "id": "json_2",
+      "category": "json",
+      "pass": true,
+      "reason": "",
+      "latency_s": 1.4167946910019964,
+      "response": "{\"language\":\"Python\",\"paradigm\":[\"object-oriented\",\"imperative\",\"functional\",\"procedural\"],\"first_appeared\":1991}",
+      "prompt_tokens": 51,
+      "completion_tokens": 314
+    },
+    {
+      "id": "json_3",
+      "category": "json",
+      "pass": true,
+      "reason": "",
+      "latency_s": 0.7496354989998508,
+      "response": "[{\"name\":\"Hydrogen\",\"symbol\":\"H\"},{\"name\":\"Helium\",\"symbol\":\"He\"},{\"name\":\"Lithium\",\"symbol\":\"Li\"}]",
+      "prompt_tokens": 50,
+      "completion_tokens": 211
+    },
+    {
+      "id": "json_4",
+      "category": "json",
+      "pass": true,
+      "reason": "",
+      "latency_s": 0.2844738310086541,
+      "response": "{\"sum\":15,\"product\":56}",
+      "prompt_tokens": 43,
+      "completion_tokens": 72
+    },
+    {
+      "id": "json_5",
+      "category": "json",
+      "pass": true,
+      "reason": "",
+      "latency_s": 0.5119937580020633,
+      "response": "{\"planets\":[\"Mercury\",\"Venus\",\"Earth\",\"Mars\",\"Jupiter\",\"Saturn\",\"Uranus\",\"Neptune\"]}",
+      "prompt_tokens": 46,
+      "completion_tokens": 131
+    }
+  ]
+}

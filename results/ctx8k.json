@@ -1,0 +1,65 @@
+{
+ "args": {
+  "mode": "ctxconc",
+  "levels": [
+   8,
+   16,
+   32
+  ],
+  "max_tokens": 300,
+  "ctx": 8000,
+  "effort": "low",
+  "temperature": null,
+  "output": "E_ctx8k.json"
+ },
+ "rows": [
+  {
+   "conc": 8,
+   "ok": 8,
+   "errors": [],
+   "wall_s": 15.02,
+   "out_tokens": 2400,
+   "agg_tps": 159.8,
+   "per_stream_decode_tps": 47.0,
+   "min_stream_decode_tps": 24.2,
+   "ttft_avg": 6.65,
+   "ttft_max": 11.65,
+   "prompt_tokens_avg": 8011,
+   "accept_rate": 0.241,
+   "mean_accepted_per_step": 1.69,
+   "ctx_target": 8000
+  },
+  {
+   "conc": 16,
+   "ok": 16,
+   "errors": [],
+   "wall_s": 28.09,
+   "out_tokens": 4800,
+   "agg_tps": 170.9,
+   "per_stream_decode_tps": 29.9,
+   "min_stream_decode_tps": 13.8,
+   "ttft_avg": 12.79,
+   "ttft_max": 24.41,
+   "prompt_tokens_avg": 8009,
+   "accept_rate": 0.244,
+   "mean_accepted_per_step": 1.71,
+   "ctx_target": 8000
+  },
+  {
+   "conc": 32,
+   "ok": 32,
+   "errors": [],
+   "wall_s": 54.98,
+   "out_tokens": 9600,
+   "agg_tps": 174.6,
+   "per_stream_decode_tps": 21.3,
+   "min_stream_decode_tps": 12.2,
+   "ttft_avg": 25.87,
+   "ttft_max": 51.07,
+   "prompt_tokens_avg": 8009,
+   "accept_rate": 0.23,
+   "mean_accepted_per_step": 1.61,
+   "ctx_target": 8000
+  }
+ ]
+}
