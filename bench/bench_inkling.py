@@ -31,6 +31,7 @@ from openai import AsyncOpenAI
 API_BASE = os.environ.get("API_BASE", "http://localhost:8000/v1")
 API_ROOT = API_BASE.rsplit("/v1", 1)[0]
 MODEL = os.environ.get("MODEL", "inkling-2-mini")
+LOOPCD = 0.0  # --loopcd: per-request LoopCD strength (server needs LOOPCD=1)
 client = AsyncOpenAI(base_url=API_BASE, api_key="test", timeout=3600, max_retries=0)
 
 TASKS = [
@@ -116,6 +117,8 @@ async def one(messages, max_tokens: int, effort: str | None, temperature: float 
         kw["reasoning_effort"] = effort
     if temperature is not None:
         kw["temperature"] = temperature
+    if LOOPCD:
+        kw["extra_body"] = {"vllm_xargs": {"loopcd": LOOPCD}}
     t0 = time.perf_counter()
     ttft = None
     usage = None
@@ -248,8 +251,11 @@ def main():
     p.add_argument("--ctx", type=int, default=250000)
     p.add_argument("--effort", default=None, help="reasoning_effort (none/minimal/low/medium/high/...)")
     p.add_argument("--temperature", type=float, default=None, help="default: server/model default")
+    p.add_argument("--loopcd", type=float, default=0.0, help="send vllm_xargs loopcd=<strength>")
     p.add_argument("--output", default=None)
     a = p.parse_args()
+    global LOOPCD
+    LOOPCD = a.loopcd
     rows = asyncio.run({"conc": mode_conc, "ctxconc": mode_ctxconc, "needle": mode_needle}[a.mode](a))
     if a.output:
         with open(a.output, "w") as f:

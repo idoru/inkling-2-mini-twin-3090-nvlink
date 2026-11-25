@@ -30,7 +30,16 @@ SPEC_DRAFT_SAMPLE="${SPEC_DRAFT_SAMPLE:-probabilistic}"
 LONG_PREFILL_THRESHOLD="${LONG_PREFILL_THRESHOLD:-32768}"
 ENABLE_PREFIX_CACHING="${ENABLE_PREFIX_CACHING:-1}"
 
+# LoopCD decoding (inkling_loopcd.py). 1 = run the extra first-pass decode so
+# requests can opt in with "vllm_xargs": {"loopcd": 0.5}. Costs throughput and
+# KV capacity for every request, so it is off by default.
+LOOPCD="${LOOPCD:-0}"
+
 EXTRA=()
+if [[ "$LOOPCD" == "1" ]]; then
+  export INKLING_LOOPCD=1
+  EXTRA+=(--logits-processors inkling_loopcd:LoopCDLogitsProcessor)
+fi
 if [[ "$SPEC_TOKENS" != "0" ]]; then
   SPEC="{\"method\":\"${SPEC_METHOD}\",\"num_speculative_tokens\":${SPEC_TOKENS}"
   if [[ -n "$SPEC_DRAFT_SAMPLE" ]]; then
