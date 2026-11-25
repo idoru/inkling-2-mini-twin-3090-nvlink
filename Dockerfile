@@ -35,6 +35,13 @@ ARG INKLING_SM86_PATCH=1
 COPY inkling_sm86_patch.py /tmp/inkling_sm86_patch.py
 RUN if [ "${INKLING_SM86_PATCH}" = "1" ]; then python3 /tmp/inkling_sm86_patch.py; fi
 
+# LoopCD (optional decoding method, see inkling_loopcd.py). The patch is inert
+# unless the server runs with LOOPCD=1; set INKLING_LOOPCD_PATCH=0 to leave
+# the model source untouched.
+ARG INKLING_LOOPCD_PATCH=1
+COPY inkling_loopcd.py inkling_loopcd_patch.py /tmp/loopcd/
+RUN if [ "${INKLING_LOOPCD_PATCH}" = "1" ]; then python3 /tmp/loopcd/inkling_loopcd_patch.py; fi
+
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 

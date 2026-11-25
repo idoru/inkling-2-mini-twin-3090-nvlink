@@ -12,6 +12,7 @@ services:
         # Lowers vLLM's SM90 gate for the Inkling2 checkpoint so it loads on
         # SM86. Unsupported upstream; rationale in inkling_sm86_patch.py.
         INKLING_SM86_PATCH: ${INKLING_SM86_PATCH:-1}
+        INKLING_LOOPCD_PATCH: ${INKLING_LOOPCD_PATCH:-1}
         DOCKER_UID: ${DOCKER_UID:-1000}
         DOCKER_GID: ${DOCKER_GID:-1000}
     image: inkling-2-mini-vllm:${VLLM_VERSION:-nightly-f2f9edcac30d128bc090a3c032e4ba125716a641}
@@ -69,6 +70,7 @@ services:
       SPEC_DRAFT_SAMPLE: ${SPEC_DRAFT_SAMPLE:-probabilistic}
       LONG_PREFILL_THRESHOLD: ${LONG_PREFILL_THRESHOLD:-32768}
       ENABLE_PREFIX_CACHING: ${ENABLE_PREFIX_CACHING:-1}
+      LOOPCD: ${LOOPCD:-0}
       EXTRA_ARGS: ${EXTRA_ARGS:-}
       HUGGING_FACE_HUB_TOKEN: ${HUGGING_FACE_HUB_TOKEN:-}
 

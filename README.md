@@ -126,12 +126,13 @@ Every tunable is an environment variable with the measured default. Copy
 | `GPU_MEM_UTIL` | empty | empty lets vLLM size the KV cache itself |
 | `LONG_PREFILL_THRESHOLD` | `32768` | prompts above this are scheduled as long prefills |
 | `ENABLE_PREFIX_CACHING` | `1` | |
+| `LOOPCD` | `0` | `1` enables per-request [LoopCD](#loopcd-experimental) |
 | `EXTRA_ARGS` | empty | extra `vllm serve` flags, whitespace-split |
 | `HF_CACHE_DIR` | `~/.cache/huggingface` | host directory for weights |
 | `VLLM_VERSION` | the validated nightly tag | `nightly` tracks upstream |
 | `INKLING_SM86_PATCH` | `1` | `0` builds an unpatched image (Hopper or newer) |
 
-Changing `VLLM_VERSION`, `INKLING_SM86_PATCH`, `DOCKER_UID` or `DOCKER_GID`
+Changing `VLLM_VERSION`, `INKLING_SM86_PATCH`, `INKLING_LOOPCD_PATCH`, `DOCKER_UID` or `DOCKER_GID`
 needs a rebuild (`docker compose up -d --build`).
 
 The compose file uses host networking and the server binds `0.0.0.0:8000`
@@ -175,6 +176,67 @@ What was checked on the patched build:
 What was not checked: output parity against a Hopper or Blackwell reference,
 any GPU other than the RTX 3090, and running without NVLink.
 
+## LoopCD (experimental)
+
+[LoopCD](https://arxiv.org/abs/2610.02185) is a decoding method for looped
+models. Inkling-2-Mini runs its middle layers three times per token; LoopCD
+pushes the final logits away from what the model would have predicted after
+only the first pass. It needs no extra weights. It is not part of vLLM: the
+image adds it with a second build-time patch
+([`inkling_loopcd_patch.py`](inkling_loopcd_patch.py)) and a logits processor
+([`inkling_loopcd.py`](inkling_loopcd.py)).
+
+It is off by default. To use it, start the server with `LOOPCD=1` and opt in
+per request:
+
+```sh
+curl localhost:8000/v1/chat/completions -H 'Content-Type: application/json' -d '{
+  "model": "inkling-2-mini",
+  "messages": [{"role": "user", "content": "Who proved the four colour theorem?"}],
+  "vllm_xargs": {"loopcd": 0.5}
+}'
+```
+
+| Request field (in `vllm_xargs`) | Meaning |
+|---|---|
+| `loopcd` | strength, 0 to 4; 0 or absent means off. 0.5 is the setting the method's author reports for this model |
+| `loopcd_adaptive` | `1` (default) scales the strength per token by how undecided the model is; `0` uses it as a fixed value |
+
+With the OpenAI Python client, pass `extra_body={"vllm_xargs": {"loopcd": 0.5}}`.
+
+**What it did here.** On AA-Omniscience-Public v1.1 (300 closed-book
+questions, three samples per arm), `loopcd: 0.5` raised the score by 4.5
+points with reasoning off and 3.5 with low reasoning, and the
+non-hallucination rate by 5.5 and 5.9 points. The gain came from fewer wrong
+answers, not more correct ones, and answers were 24–39% shorter. A
+single-sample run at the default (high) reasoning effort showed no measurable
+difference. Details and caveats are in [`results/LOOPCD.md`](results/LOOPCD.md);
+the main one is that the grader was Inkling itself, not the benchmark's
+official grading model.
+
+**What it costs.** `LOOPCD=1` adds six layer visits and one more
+full-attention KV cache for every token of every request:
+
+- About 12% lower throughput for all requests, and about 18–22% lower for
+  requests that send `loopcd`.
+- Less KV capacity. With speculation on, 262,144 context no longer fits at
+  `MAX_NUM_SEQS=32`. Use either `SPEC_TOKENS=0` (KV 348,991 tokens) or
+  `MAX_NUM_SEQS=16` (KV 268,367 tokens).
+
+Notes:
+
+- With `LOOPCD=0`, a request's `loopcd` field is ignored without an error.
+- Control tokens (message, block and tool-call markers) are never guided.
+- The strength applies to reasoning tokens as well as the answer.
+- `INKLING_LOOPCD_PATCH=0` at build time leaves the model source unpatched.
+
+To rerun the comparison:
+
+```sh
+LOOPCD=1 SPEC_TOKENS=0 docker compose up -d
+.venv/bin/python bench/loopcd_omniscience.py --samples 3 --effort none
+```
+
 ## Reproducing the numbers
 
 ```sh
@@ -215,6 +277,7 @@ text being generated. Expect run-to-run variation of a few percent.
 | `docker-compose.yml` | the service: GPUs, caches, tunables, healthcheck |
 | `Dockerfile` | pinned nightly base, host-uid user, patch, entrypoint |
 | `inkling_sm86_patch.py` | the four build-time edits, with rationale |
+| `inkling_loopcd_patch.py`, `inkling_loopcd.py` | optional LoopCD decoding: model patch and logits processor |
 | `entrypoint.sh` | turns the environment variables into `vllm serve` flags |
 | `scripts/preflight.sh` | host checks before the first start |
 | `scripts/smoke.sh` | end-to-end check of a running server |
