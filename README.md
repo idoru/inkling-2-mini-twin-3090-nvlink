@@ -31,7 +31,7 @@ all 24 GB on each card. A desktop session on one of them may not leave enough.
 ## Quick start
 
 ```sh
-git clone <this repo> && cd inkling-2-mini-twin-3090-nvlink
+git clone https://github.com/idoru/inkling-2-mini-twin-3090-nvlink.git && cd inkling-2-mini-twin-3090-nvlink
 scripts/preflight.sh          # checks GPUs, NVLink, driver, Docker, disk
 docker compose up -d --build  # builds the patched image, downloads weights on first start
 docker compose logs -f vllm   # wait for "Application startup complete"
@@ -220,3 +220,8 @@ text being generated. Expect run-to-run variation of a few percent.
 | `scripts/smoke.sh` | end-to-end check of a running server |
 | `bench/` | throughput benchmark and correctness eval |
 | `results/` | measurements from the validated setup |
+
+## License
+
+[MIT](LICENSE). This covers the files in this repository only. vLLM, Triton
+and the Inkling-2-Mini weights are under their own licenses.
