@@ -227,10 +227,16 @@ async def mode_ctxconc(a):
 async def mode_needle(a):
     seed = int(time.time() * 1000) % 10_000_000
     code = f"{random.Random(seed).randint(100000, 999999)}"
-    needle = f"IMPORTANT NOTE: the secret vault access code is {code}. Remember it."
+    if a.plain_needle:
+        # Neutral wording: the default's "secret vault access code" is
+        # occasionally refused instead of answered.
+        needle = f"Entry 0-0: the catalogue number of the blue ledger is {code}."
+        question = "What is the catalogue number of the blue ledger given in the entries above?"
+    else:
+        needle = f"IMPORTANT NOTE: the secret vault access code is {code}. Remember it."
+        question = "What is the secret vault access code mentioned in the entries above?"
     doc = filler(a.ctx, seed, needle)
-    msgs = [{"role": "user", "content": doc + "\n\nWhat is the secret vault access code mentioned in "
-             "the entries above? Reply with just the number."}]
+    msgs = [{"role": "user", "content": doc + f"\n\n{question} Reply with just the number."}]
     row, ok = await batch([msgs], a.max_tokens, a.effort, a.temperature)
     ans = ok[0]["text"] if ok else ""
     row |= {"expected": code, "answer": ans.strip()[:200], "correct": code in ans, "ctx_target": a.ctx}
@@ -248,6 +254,7 @@ def main():
     p.add_argument("--ctx", type=int, default=250000)
     p.add_argument("--effort", default=None, help="reasoning_effort (none/minimal/low/medium/high/...)")
     p.add_argument("--temperature", type=float, default=None, help="default: server/model default")
+    p.add_argument("--plain-needle", action="store_true", help="needle mode: neutral needle wording")
     p.add_argument("--output", default=None)
     a = p.parse_args()
     rows = asyncio.run({"conc": mode_conc, "ctxconc": mode_ctxconc, "needle": mode_needle}[a.mode](a))
