@@ -115,9 +115,26 @@ What the cap does under load, measured on the default configuration:
 - **Speed.** The cap, not temperature, is what limits the cards:
   `nvidia-smi -q` reports `SW Power Cap: Active` and no thermal slowdown
   under load. Raising it buys speed and costs heat and fan noise; lowering
-  it does the reverse. Other limits were not measured for this model.
-  Throughput at 32 streams fell about 2% (965 to 946 tok/s) as the cards
-  warmed over the 8-minute run.
+  it does the reverse. Throughput at 32 streams fell about 2% (965 to
+  946 tok/s) as the cards warmed over the 8-minute run.
+
+### 245 W against 275 W
+
+The same 8-minute run at 32 streams, then one cold 249k-token prompt, at
+each limit. Throughput is the median of the last ten of 30 passes, with the
+cards warm.
+
+| | 245 W | 275 W | Change |
+|---|---:|---:|---:|
+| Decode, 32 streams | 946 tok/s | 1,021 tok/s | +8% |
+| Prefill, 249k tokens | 2,712 tok/s | 2,782 tok/s | +3% |
+| Draw under load, both cards | 488 W | 548 W | +60 W |
+| GPU 0 after 8 minutes | 75 °C, fan 63% | 78 °C, fan 68% | +3 °C |
+| GPU 1 after 8 minutes | 60 °C, fan 30% | 61 °C, fan 32% | +1 °C |
+
+The cap is still the limit at 275 W, and neither card slows for
+temperature. Decode gains more than prefill. Limits other than these two
+were not measured.
 
 ## Choosing a configuration
 
