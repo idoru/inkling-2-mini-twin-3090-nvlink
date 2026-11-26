@@ -118,23 +118,23 @@ What the cap does under load, measured on the default configuration:
   it does the reverse. Throughput at 32 streams fell about 2% (965 to
   946 tok/s) as the cards warmed over the 8-minute run.
 
-### 245 W against 275 W
+### Other limits
 
 The same 8-minute run at 32 streams, then one cold 249k-token prompt, at
 each limit. Throughput is the median of the last ten of 30 passes, with the
-cards warm.
+cards warm; the percentages are against 245 W.
 
-| | 245 W | 275 W | Change |
+| | 245 W | 275 W | 300 W |
 |---|---:|---:|---:|
-| Decode, 32 streams | 946 tok/s | 1,021 tok/s | +8% |
-| Prefill, 249k tokens | 2,712 tok/s | 2,782 tok/s | +3% |
-| Draw under load, both cards | 488 W | 548 W | +60 W |
-| GPU 0 after 8 minutes | 75 °C, fan 63% | 78 °C, fan 68% | +3 °C |
-| GPU 1 after 8 minutes | 60 °C, fan 30% | 61 °C, fan 32% | +1 °C |
+| Decode, 32 streams | 946 tok/s | 1,021 tok/s (+8%) | 1,048 tok/s (+11%) |
+| Prefill, 249k tokens | 2,712 tok/s | 2,782 tok/s (+3%) | 2,862 tok/s (+6%) |
+| Draw under load, both cards | 488 W | 548 W | 596 W |
+| GPU 0 after 8 minutes | 75 °C, fan 63% | 78 °C, fan 68% | 80 °C, fan 73% |
+| GPU 1 after 8 minutes | 60 °C, fan 30% | 61 °C, fan 32% | 63 °C, fan 35% |
 
-The cap is still the limit at 275 W, and neither card slows for
-temperature. Decode gains more than prefill. Limits other than these two
-were not measured.
+The cap is still the limit at 300 W, and neither card slows for
+temperature. The returns shrink: the first 30 W per card buys 8%, the next
+25 W buys under 3%. Limits other than these three were not measured.
 
 ## Choosing a configuration
 
