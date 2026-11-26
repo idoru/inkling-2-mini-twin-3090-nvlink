@@ -16,7 +16,8 @@ MAX_NUM_SEQS="${MAX_NUM_SEQS:-32}"
 # full-length request needs more KV than two 24 GB cards have left.
 MAX_NUM_BATCHED_TOKENS="${MAX_NUM_BATCHED_TOKENS:-1024}"
 TENSOR_PARALLEL_SIZE="${TENSOR_PARALLEL_SIZE:-2}"
-# Off Blackwell (SM12x) the Inkling2 attention only accepts auto/bfloat16.
+# auto = BF16. fp8 (E4M3) halves KV memory; below Blackwell it needs the
+# image's FP8 KV patch (inkling_fp8kv_patch.py).
 KV_CACHE_DTYPE="${KV_CACHE_DTYPE:-auto}"
 # Empty = let vLLM's extensible KV cache size itself from what is free after
 # warmup (the v0.34+ default and recommendation). Set a fraction to pin it.

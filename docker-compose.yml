@@ -12,6 +12,7 @@ services:
         # Lowers vLLM's SM90 gate for the Inkling2 checkpoint so it loads on
         # SM86. Unsupported upstream; rationale in inkling_sm86_patch.py.
         INKLING_SM86_PATCH: ${INKLING_SM86_PATCH:-1}
+        INKLING_FP8KV_PATCH: ${INKLING_FP8KV_PATCH:-1}
         DOCKER_UID: ${DOCKER_UID:-1000}
         DOCKER_GID: ${DOCKER_GID:-1000}
     image: inkling-2-mini-vllm:${VLLM_VERSION:-nightly-f2f9edcac30d128bc090a3c032e4ba125716a641}

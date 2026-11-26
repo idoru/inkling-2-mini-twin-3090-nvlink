@@ -1,0 +1,65 @@
+{
+ "note": "AA-Omniscience-Public v1.1, reasoning effort none, graded by the served model. fp8: KV_CACHE_DTYPE=fp8, SPEC_TOKENS=0, two identical unguided arms of 3 samples per question. bf16: unguided arm of the earlier run on the BF16 server.",
+ "fp8_arm_1": {
+  "n": 900,
+  "correct": 148,
+  "incorrect": 126,
+  "partial": 33,
+  "not_attempted": 593,
+  "index": 2.44,
+  "accuracy": 16.44,
+  "non_hallucination": 83.24,
+  "mean_completion_tokens": 1117.7
+ },
+ "fp8_arm_2": {
+  "n": 898,
+  "correct": 141,
+  "incorrect": 147,
+  "partial": 34,
+  "not_attempted": 576,
+  "index": -0.67,
+  "accuracy": 15.7,
+  "non_hallucination": 80.58,
+  "mean_completion_tokens": 1067.8
+ },
+ "fp8_arm_2_minus_arm_1": {
+  "index": {
+   "delta": -3.11,
+   "ci95": [
+    -6.66,
+    0.34
+   ]
+  },
+  "accuracy": {
+   "delta": -0.74,
+   "ci95": [
+    -2.54,
+    1.0
+   ]
+  },
+  "non_hallucination": {
+   "delta": -2.66,
+   "ci95": [
+    -5.44,
+    0.16
+   ]
+  }
+ },
+ "fp8_pooled": {
+  "n": 1798,
+  "accuracy": 16.07,
+  "index": 0.89,
+  "non_hallucination": 81.91
+ },
+ "bf16": {
+  "n": 898,
+  "correct": 134,
+  "incorrect": 136,
+  "partial": 35,
+  "not_attempted": 593,
+  "index": -0.22,
+  "accuracy": 14.92,
+  "non_hallucination": 82.2,
+  "mean_completion_tokens": 1072.8
+ }
+}

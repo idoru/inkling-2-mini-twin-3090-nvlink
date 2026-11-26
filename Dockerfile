@@ -35,6 +35,13 @@ ARG INKLING_SM86_PATCH=1
 COPY inkling_sm86_patch.py /tmp/inkling_sm86_patch.py
 RUN if [ "${INKLING_SM86_PATCH}" = "1" ]; then python3 /tmp/inkling_sm86_patch.py; fi
 
+# FP8 KV cache below Blackwell (see inkling_fp8kv_patch.py): what makes the
+# long-context profiles fit. Inert unless the server runs with
+# KV_CACHE_DTYPE=fp8; set INKLING_FP8KV_PATCH=0 to leave the kernels untouched.
+ARG INKLING_FP8KV_PATCH=1
+COPY inkling_fp8kv_patch.py /tmp/inkling_fp8kv_patch.py
+RUN if [ "${INKLING_FP8KV_PATCH}" = "1" ]; then python3 /tmp/inkling_fp8kv_patch.py; fi
+
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
