@@ -37,8 +37,8 @@ Measured on the default configuration:
 Both GPUs must be otherwise idle: at 262,144 context the server uses nearly
 all 24 GB on each card. A desktop session on one of them may not leave enough.
 
-Every figure in this README was measured with both cards limited to 245 W;
-see [Power limit](#power-limit).
+Every other figure in this README was measured with both cards limited to
+245 W; see [Power limit](#power-limit).
 
 ## Quick start
 
@@ -115,9 +115,28 @@ What the cap does under load, measured on the default configuration:
 - **Speed.** The cap, not temperature, is what limits the cards:
   `nvidia-smi -q` reports `SW Power Cap: Active` and no thermal slowdown
   under load. Raising it buys speed and costs heat and fan noise; lowering
-  it does the reverse. Other limits were not measured for this model.
-  Throughput at 32 streams fell about 2% (965 to 946 tok/s) as the cards
-  warmed over the 8-minute run.
+  it does the reverse. Throughput at 32 streams fell about 2% (965 to
+  946 tok/s) as the cards warmed over the 8-minute run.
+
+### Other limits
+
+The same 8-minute run at 32 streams, then one cold 249k-token prompt, at
+each limit. Throughput is the median of the last ten of 30 passes, with the
+cards warm; the percentages are against 245 W. Per-card logs sampled every
+5 seconds are in `results/power/`.
+
+| | 245 W | 260 W | 275 W | 300 W |
+|---|---:|---:|---:|---:|
+| Decode, 32 streams | 946 tok/s | 984 tok/s (+4%) | 1,021 tok/s (+8%) | 1,048 tok/s (+11%) |
+| Prefill, 249k tokens | 2,712 tok/s | 2,728 tok/s (+1%) | 2,782 tok/s (+3%) | 2,862 tok/s (+6%) |
+| Draw under load, both cards | 488 W | 518 W | 548 W | 596 W |
+| GPU 0 after 8 minutes | 75 °C, fan 63% | 76 °C, fan 64% | 78 °C, fan 68% | 80 °C, fan 73% |
+| GPU 1 after 8 minutes | 60 °C, fan 30% | 61 °C, fan 30% | 61 °C, fan 32% | 63 °C, fan 35% |
+
+The cap is still the limit at 300 W, and neither card slows for
+temperature. Decode gains about 4% for each 15 W per card up to 275 W;
+the 25 W after that buys under 3%. Limits other than these four were not
+measured.
 
 ## Choosing a configuration
 
